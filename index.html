@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AfroBench</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-900 font-sans">
+
+    <!-- Navigation Bar -->
+    <nav class="flex justify-between items-center p-6 bg-white shadow-md border-b border-gray-200">
+        <h1 class="text-3xl font-extrabold text-gray-800">AfroBench</h1>
+        <ul class="flex space-x-6">
+            <li><a href="leaderboard.html" class="hover:text-yellow-600 font-medium">Leaderboard</a></li>
+            <li><a href="codebase.html" class="hover:text-yellow-600 font-medium">Codebase</a></li>
+            <li><a href="data.html" class="hover:text-yellow-600 font-medium">Data</a></li>
+            <li><a href="https://arxiv.org/abs/PAPER_LINK" class="hover:text-yellow-600 font-medium">Paper</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="text-center mt-16">
+        <h1 class="text-4xl sm:text-5xl font-black text-gray-900 max-w-4xl mx-auto break-words leading-tight">
+            How Good are Large Language Models on African Languages?
+        </h1>
+        <p class="mt-4 text-gray-700 text-lg">Evaluating 64 African languages across 15 NLP tasks and 22 Datasets.</p>
+    </header>
+
+    <!-- Overview Section -->
+    <section class="mt-12 max-w-4xl mx-auto text-center">
+        <p class="text-lg text-gray-700">AfroBench is a comprehensive benchmark for evaluating large language models (LLMs) on African languages, covering translation, question answering, text classification, and more.</p>
+        <p class="text-lg font-bold text-yellow-600 mt-4">Check out the <a href="https://arxiv.org/abs/PAPER_LINK" class="underline">paper</a> for more details and visit the <a href="leaderboard.html" class="underline">leaderboard</a> for detailed results!</p>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="text-center mt-12">
+        <a href="leaderboard.html" class="px-6 py-3 bg-yellow-500 rounded-full text-lg font-bold shadow-md hover:bg-yellow-400">ArXiv(Coming Soon!)</a>
+        <a href="leaderboard.html" class="px-6 py-3 bg-yellow-500 rounded-full text-lg font-bold shadow-md hover:bg-yellow-400">View Leaderboard</a>
+        <a href="https://github.com/JessicaOjo/AfroBench" class="ml-4 px-6 py-3 bg-blue-500 rounded-full text-lg font-bold shadow-md hover:bg-blue-400">Codebase(Coming Soon!)</a>
+    </section>
+
+    <!-- Key Highlights -->
+    <section class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto text-center">
+        <div class="p-6 bg-white rounded-lg shadow-lg border border-gray-200">
+            <h2 class="text-2xl font-bold text-gray-800">64 Languages</h2>
+            <p class="text-gray-700 mt-2">Evaluating diverse African languages for NLP fairness.</p>
+        </div>
+        <div class="p-6 bg-white rounded-lg shadow-lg border border-gray-200">
+            <h2 class="text-2xl font-bold text-gray-800">15 Tasks</h2>
+            <p class="text-gray-700 mt-2">From machine translation to sentiment analysis.</p>
+        </div>
+        <div class="p-6 bg-white rounded-lg shadow-lg border border-gray-200">
+            <h2 class="text-2xl font-bold text-gray-800">Opensource</h2>
+            <p class="text-gray-700 mt-2">Evaluation scripts configured in lm-eval-harness for reproducible benchmarking.</p>
+        </div>
+    </section>
+
+    <!-- AfroBench Task Image -->
+    <section class="mt-12 text-center">
+        <img src="assets/afrobench-tasks.png" alt="AfroBench Tasks" class="mx-auto w-3/4 shadow-lg rounded-lg">
+        <p class="text-gray-400 mt-4 text-sm">Figure: Overview of 15 NLP tasks and 22 datasets covered in AfroBench.</p>
+    </section>
+
+    <!-- Abstract Section -->
+    <section class="py-16 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="lg:text-center">
+                <h2 class="text-3xl font-bold text-gray-900">Abstract</h2>
+                <div class="mt-4 max-w-3xl mx-auto text-xl text-gray-500 leading-relaxed text-justify">
+                    <p>
+                        Large-scale multilingual evaluations, such as MEGA, often include only a handful of African languages due to the scarcity of high-quality evaluation data and the limited discoverability of existing African datasets. This lack of representation hinders comprehensive LLM evaluation across a diverse range of languages and tasks. To address these challenges, we introduce AFROBENCH—a multi-task benchmark for evaluating the performance of LLMs across 64 African languages, 15 tasks and 22 datasets. AFROBENCH consists of nine natural language understanding datasets, five text generation datasets, five knowledge and question answering tasks, and one mathematical reasoning task. We present results comparing the performance of prompting LLMs to fine-tuned baselines based on BERT and T5-style models. Our results suggest large gaps in performance between high-resource languages, such as English, and African languages across most tasks; but performance also varies based on the availability of monolingual data resources. Our findings confirm that performance on African languages continues to remain a hurdle for current LLMs, underscoring the need for additional efforts to close this gap.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Key Metrics Grid -->
+<!--     <section class="py-12 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
+                <div class="bg-yellow-50 rounded-xl p-8 text-center">
+                    <div class="text-4xl font-bold text-yellow-600">64</div>
+                    <div class="mt-2 text-gray-600">Languages Evaluated</div>
+                </div>
+                <div class="bg-yellow-50 rounded-xl p-8 text-center">
+                    <div class="text-4xl font-bold text-yellow-600">15</div>
+                    <div class="mt-2 text-gray-600">NLP Tasks</div>
+                </div>
+                <div class="bg-yellow-50 rounded-xl p-8 text-center">
+                    <div class="text-4xl font-bold text-yellow-600">21+</div>
+                    <div class="mt-2 text-gray-600">Datasets</div>
+                </div>
+            </div>
+        </div>
+    </section> -->
+
+
+    <!-- Evaluation Tables and Figures -->
+    <section class="mt-12 text-left max-w-5xl mx-auto">
+        <h2 class="text-3xl font-bold">AfroBench Evaluation</h2>
+        <div class="max-w-3xl mx-auto">
+            <p class="flex flex-col md:flex-row items-center md:items-start text-gray-700 mt-2 justify-between gap-6">
+                AFROBENCH is the first comprehensive LLM benchmark for African languages, evaluating proprietary and open models across 15 NLP tasks, 21 datasets, and 64 languages. Covering both Natural Language Understanding and Generation, it challenges models beyond traditional benchmarks with tasks like mathematical reasoning and knowledge QA. AFROBENCH provides critical insights into model performance across diverse linguistic landscapes. The results showcase the performance of various LLMs across different NLP tasks.
+            </p>
+        </div>
+        <img src="assets/afrobench-eval.png" alt="AfroBench Evaluation" class="w-2/3 md:w-3/4 max-w-full mx-auto shadow-lg rounded-lg mt-6">
+    </section>
+
+
+
+    <section class="mt-12 text-left max-w-5xl mx-auto">
+        <h2 class="text-3xl font-bold">AfroBench-LITE Evaluation</h2>
+        <div class="flex flex-col md:flex-row items-center md:items-start text-gray-700 mt-2 justify-between gap-4">
+            <div class="md:w-1/2">
+                <p>
+                    AFROBENCH-LITE is a streamlined version of AFROBENCH, designed for comprehensive LLM evaluation under compute constraints. 
+                    It establishes baselines across 7 datasets and 14 African languages, ensuring broad NLP coverage while maintaining language consistency. 
+                    Below, we compare AFROBENCH-LITE scores with the monolingual data size of each language based on MADLAD.
+                </p>
+                <img src="assets/afrobench-lang-perf.png" alt="AfroBench Language Performance" class="max-w-full w-3/4 shadow-lg rounded-lg mt-4">
+            </div>
+            <div class="md:w-2/5 flex justify-center">
+                <img src="assets/afrobench-lite.png" alt="AfroBench Lite" class="max-w-full shadow-lg rounded-lg">
+            </div>
+        </div>
+    </section>
+
+    
+
+
+        <!-- Insights & Findings -->
+    <section class="mt-12 max-w-5xl mx-auto text-left">
+        <h2 class="text-3xl font-bold">Key Insights</h2>
+        <ul class="mt-4 list-disc list-inside text-gray-600">
+            <li>LLMs perform significantly better in high-resource languages compared to African languages.</li>
+            <li>Proprietary models like GPT-4o and Gemini-1.5 outperform open-source models.</li>
+            <li>Fine-tuned baselines on AfroBench datasets often achieve higher performance than prompted LLMs.</li>
+            <li>Knowledge-intensive and reasoning tasks exhibit the largest performance gap.</li>
+        </ul>
+    </section>
+
+    <!-- Citation -->
+    <section class="mt-12 max-w-5xl mx-auto text-left bg-white p-6 rounded-lg shadow-lg border border-gray-200">
+        <h2 class="text-3xl font-bold text-gray-900">Cite AfroBench</h2>
+        <pre class="bg-gray-100 p-4 rounded-lg text-gray-800 text-sm overflow-x-auto border border-gray-300">
+        @article{AfroBench2024,
+          author    = {Jessica Ojo and Odunayo Ogundepo and Akintunde Oladipo and Kelechi Ogueji and 
+                       Jimmy Lin and Pontus Stenetorp and David Ifeoluwa Adelani},
+          title     = {AfroBench: How Good are Large Language Models on African Languages?},
+          year      = {2025},
+          journal   = {Arxiv},
+          url       = {arxiv link}
+        }</pre>
+    </section>
+
+    
+    <!-- Footer -->
+    <footer class="text-center mt-12 py-6 text-gray-500 text-sm">© 2025 AfroBench - Evaluating AI for African Languages</footer>
+    
+</body>
+</html>
