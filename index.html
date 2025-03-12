@@ -58,7 +58,7 @@
 
     <!-- AfroBench Task Image -->
     <section class="mt-12 text-center">
-        <img src="assets/afrobench-tasks.png" alt="AfroBench Tasks" class="mx-auto w-3/4 shadow-lg rounded-lg">
+        <img src="assets/afrobench-tasks.png" alt="AfroBench Tasks" class="mx-auto w-2/3 shadow-lg rounded-lg">
         <p class="text-gray-400 mt-4 text-sm">Figure: Overview of 15 NLP tasks and 22 datasets covered in AfroBench.</p>
     </section>
 
@@ -76,26 +76,6 @@
         </div>
     </section>
 
-    <!-- Key Metrics Grid -->
-<!--     <section class="py-12 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
-                <div class="bg-yellow-50 rounded-xl p-8 text-center">
-                    <div class="text-4xl font-bold text-yellow-600">64</div>
-                    <div class="mt-2 text-gray-600">Languages Evaluated</div>
-                </div>
-                <div class="bg-yellow-50 rounded-xl p-8 text-center">
-                    <div class="text-4xl font-bold text-yellow-600">15</div>
-                    <div class="mt-2 text-gray-600">NLP Tasks</div>
-                </div>
-                <div class="bg-yellow-50 rounded-xl p-8 text-center">
-                    <div class="text-4xl font-bold text-yellow-600">21+</div>
-                    <div class="mt-2 text-gray-600">Datasets</div>
-                </div>
-            </div>
-        </div>
-    </section> -->
-
 
     <!-- Evaluation Tables and Figures -->
     <section class="mt-12 text-left max-w-5xl mx-auto">
@@ -108,29 +88,37 @@
         <img src="assets/afrobench-eval.png" alt="AfroBench Evaluation" class="w-2/3 md:w-3/4 max-w-full mx-auto shadow-lg rounded-lg mt-6">
     </section>
 
-
-
     <section class="mt-12 text-left max-w-5xl mx-auto">
-        <h2 class="text-3xl font-bold">AfroBench-LITE Evaluation</h2>
-        <div class="flex flex-col md:flex-row items-center md:items-start text-gray-700 mt-2 justify-between gap-4">
-            <div class="md:w-1/2">
-                <p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+            <!-- Left Column: AfroBench-LITE Content -->
+            <div>
+                <h2 class="text-3xl font-bold">AfroBench-LITE Evaluation</h2>
+                <p class="text-gray-700 mt-2">
                     AFROBENCH-LITE is a streamlined version of AFROBENCH, designed for comprehensive LLM evaluation under compute constraints. 
-                    It establishes baselines across 7 datasets and 14 African languages, ensuring broad NLP coverage while maintaining language consistency. 
-                    Below, we compare AFROBENCH-LITE scores with the monolingual data size of each language based on MADLAD.
+                    It establishes baselines across 7 datasets and 14 African languages, ensuring broad NLP coverage while maintaining language consistency.
                 </p>
-                <img src="assets/afrobench-lang-perf.png" alt="AfroBench Language Performance" class="max-w-full w-3/4 shadow-lg rounded-lg mt-4">
+                <div class="mt-6">
+                    <img src="assets/afrobench-lite.png" alt="AfroBench-LITE Table" class="max-w-full shadow-lg rounded-lg">
+                </div>
             </div>
-            <div class="md:w-2/5 flex justify-center">
-                <img src="assets/afrobench-lite.png" alt="AfroBench Lite" class="max-w-full shadow-lg rounded-lg">
+    
+            <!-- Right Column: Scatter Plot -->
+            <div class="flex flex-col items-center">
+                <img src="assets/afrobench_leaderboard.png" alt="AfroBench Leaderboard" class="max-w-full shadow-lg rounded-lg">
+                <p class="text-gray-700 mt-3 text-sm text-left">
+                    Figure: Comparison between AfroBench score against model size. Closed models tend to perform better, with GPT-4o and Gemini 1.5 Pro leading the benchmarks.
+                </p>
             </div>
         </div>
+    
+        <!-- Full-width language performance image -->
+        <div class="mt-6">
+            <img src="assets/afrobench-lang-perf.png" alt="AfroBench Language Performance" class="max-w-full shadow-lg rounded-lg">
+        </div>
     </section>
-
     
 
-
-        <!-- Insights & Findings -->
+    <!-- Insights & Findings -->
     <section class="mt-12 max-w-5xl mx-auto text-left">
         <h2 class="text-3xl font-bold">Key Insights</h2>
         <ul class="mt-4 list-disc list-inside text-gray-600">
@@ -145,13 +133,14 @@
     <section class="mt-12 max-w-5xl mx-auto text-left bg-white p-6 rounded-lg shadow-lg border border-gray-200">
         <h2 class="text-3xl font-bold text-gray-900">Cite AfroBench</h2>
         <pre class="bg-gray-100 p-4 rounded-lg text-gray-800 text-sm overflow-x-auto border border-gray-300">
-        @article{AfroBench2024,
-          author    = {Jessica Ojo and Odunayo Ogundepo and Akintunde Oladipo and Kelechi Ogueji and 
-                       Jimmy Lin and Pontus Stenetorp and David Ifeoluwa Adelani},
-          title     = {AfroBench: How Good are Large Language Models on African Languages?},
-          year      = {2025},
-          journal   = {Arxiv},
-          url       = {arxiv link}
+        @misc{ojo2025afrobenchgoodlargelanguage,
+          title={AfroBench: How Good are Large Language Models on African Languages?}, 
+          author={Jessica Ojo and Odunayo Ogundepo and Akintunde Oladipo and Kelechi Ogueji and Jimmy Lin and Pontus Stenetorp and David Ifeoluwa Adelani},
+          year={2025},
+          eprint={2311.07978},
+          archivePrefix={arXiv},
+          primaryClass={cs.CL},
+          url={https://arxiv.org/abs/2311.07978}, 
         }</pre>
     </section>
 

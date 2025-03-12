@@ -1,0 +1,130 @@
+{
+    "NLI": {
+        "afrixnli": {
+            "Aya-101 13B": 51.5,
+            "Gemma1.1 7b": 34.4,
+            "LLaMa2 7b": 33.8,
+            "LLaMa3 8B": 35.4,
+            "LLaMa3.1 8B": 36.5,
+            "LLaMAX3 8B": 40.8,
+            "Gemma2 9b": 40.3,
+            "Gemma2 27b": 42.8,
+            "LLaMa3.1 70B": 38.0,
+            "AfroLLaMa 8B": 35.9,
+            "Gemini 1.5 pro": 62.0,
+            "GPT-4o (Aug)": 64.3
+        }
+    },
+    "Intent": {
+        "injongointent": {
+            "AfroLLaMa 8B": 0.8,
+            "LLaMAX3 8B": 5.6,
+            "LLaMa2 7b": 1.5,
+            "LLaMa3.1 70B": 34.0,
+            "LLaMa3.1 8B": 6.0,
+            "LLaMa3 8B": 2.1,
+            "Gemma1.1 7b": 9.4,
+            "Gemma2 27b": 33.0,
+            "Gemma2 9b": 29.2,
+            "Aya-101 13B": 42.4,
+            "Gemini 1.5 pro": 74.3,
+            "GPT-4o (Aug)": 74.0
+        }
+    },
+    "MT(xx-en/fr)": {
+        "flores - xx_en": {
+            "AfroLLaMa 8B": 10.0,
+            "LLaMAX3 8B": 34.1,
+            "LLaMa2 7b": 20.8,
+            "LLaMa3.1 70B": 36.2,
+            "LLaMa3.1 8B": 28.1,
+            "LLaMa3 8B": 28.0,
+            "Aya-101 13B": 38.6,
+            "Gemma1.1 7b": 2.6,
+            "Gemma2 27b": 33.0,
+            "Gemma2 9b": 31.6,
+            "Gemini 1.5 pro": 42.1,
+            "GPT-4o (Aug)": 41.4
+        }
+    },
+    "MT(en/fr-xx)": {
+        "flores - en_xx": {
+            "AfroLLaMa 8B": 8.7,
+            "LLaMAX3 8B": 21.1,
+            "LLaMa2 7b": 10.0,
+            "LLaMa3.1 70B": 24.1,
+            "LLaMa3.1 8B": 15.3,
+            "LLaMa3 8B": 13.1,
+            "Aya-101 13B": 24.0,
+            "Gemma1.1 7b": 8.2,
+            "Gemma2 27b": 33.0,
+            "Gemma2 9b": 31.6,
+            "Gemini 1.5 pro": 36.0,
+            "GPT-4o (Aug)": 32.1
+        }
+    },
+    "MMLU": {
+        "afrimmlu": {
+            "AfroLLaMa 8B": 25.8,
+            "Aya-101 13B": 29.6,
+            "Gemma1.1 7b": 27.4,
+            "LLaMa2 7b": 26.1,
+            "LLaMa3 8B": 28.1,
+            "LLaMAX3 8B": 29.3,
+            "Gemma2 9b": 35.4,
+            "Gemma2 27b": 39.9,
+            "LLaMa3.1 8B": 31.2,
+            "LLaMa3.1 70B": 39.4,
+            "GPT-4o (Aug)": 60.0,
+            "Gemini 1.5 pro": 60.2
+        }
+    },
+    "Math": {
+        "afrimgsm": {
+            "AfroLLaMa 8B": 0.3,
+            "Aya-101 13B": 4.4,
+            "Gemma1.1 7b": 4.6,
+            "LLaMa2 7b": 2.0,
+            "LLaMa3 8B": 5.1,
+            "LLaMa3.1 8B": 6.8,
+            "LLaMAX3 8B": 4.7,
+            "Gemma2 9b": 18.7,
+            "Gemma2 27b": 27.0,
+            "LLaMa3.1 70B": 23.2,
+            "GPT-4o (Aug)": 49.8,
+            "Gemini 1.5 pro": 52.3
+        }
+    },
+    "Topic": {
+        "sib": {
+            "AfroLLaMa 8B": 25.6,
+            "LLaMAX3 8B": 50.9,
+            "LLaMa2 7b": 19.8,
+            "LLaMa3.1 70B": 52.0,
+            "LLaMa3.1 8B": 44.6,
+            "LLaMa3 8B": 37.2,
+            "Aya-101 13B": 67.0,
+            "Gemma1.1 7b": 42.7,
+            "Gemma2 27b": 57.3,
+            "Gemma2 9b": 56.0,
+            "Gemini 1.5 pro": 74.5,
+            "GPT-4o (Aug)": 72.5
+        }
+    },
+    "RC": {
+        "belebele": {
+            "AfroLLaMa 8B": 24.0,
+            "LLaMAX3 8B": 29.5,
+            "LLaMa2 7b": 23.9,
+            "LLaMa3.1 8B": 38.6,
+            "LLaMa3.1 70B": 49.4,
+            "LLaMa3 8B": 27.2,
+            "Aya-101 13B": 60.6,
+            "Gemma1.1 7b": 37.7,
+            "Gemma2 27b": 53.6,
+            "Gemma2 9b": 51.4,
+            "Gemini 1.5 pro": 53.0,
+            "GPT-4o (Aug)": 69.1
+        }
+    }
+}

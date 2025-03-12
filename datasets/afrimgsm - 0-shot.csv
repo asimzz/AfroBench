@@ -1,5 +1,5 @@
 model,prompt,eng,fra,amh,ewe,hau,ibo,kin,lin,lug,orm,sna,sot,swa,twi,vai,wol,xho,yor,zul,avg
-AfroLlama-V1,prompt_1,0,0.8,0,0,1.2,0,0.4,0.4,0,0.4,0.4,0.8,0.4,0,,0,0,0.8,0,0.3
+AfroLlama-V1,prompt_1,0,0.8,0,0,1.2,0,0.4,0.4,0,0.4,0.4,0.8,0.4,0,0,0,0,0.8,0,0.3
 AfroLlama-V1,prompt_2,0,0.4,0,0,0,0,0,0.4,0,0,0,0,0,0,,0,0,0,0,0.0
 AfroLlama-V1,prompt_3,0,0.8,0,0,0,0,0,0.4,0.8,0,0,0,0,0,,0,0,0,0.4,0.1
 AfroLlama-V1,prompt_4,0.4,0,0,0,0.4,0,0,0,0.4,0,0,0,0,0.4,,0,0,0,0.4,0.1
