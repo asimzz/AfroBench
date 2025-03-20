@@ -58,7 +58,7 @@ MODEL_MAP = {
 }
 
 
-def generate_json_files(data_dir="datasets", output_dir="leaderboard_json", leaderboard=None):
+def generate_json_files(data_dir="../results", output_dir="leaderboard_json", leaderboard=None):
     os.makedirs(output_dir, exist_ok=True)
 
     # Dictionary to store either per-task JSON data or the leaderboard
