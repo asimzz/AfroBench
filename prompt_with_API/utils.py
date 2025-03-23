@@ -403,7 +403,7 @@ def call_model(model_name: str, prompts):
             generate_from_openai_chat_completion(all_input_messages, model_name, 0.3, 500, 1.0, 500))
 
         completions = [completion_text.lower() for completion_text in responses]
-    elif "gemini" in model_name or 'gemma' in model_name:
+    elif "gemini" in model_name or 'gemma-3' in model_name:
         api_key = os.getenv("GEMINI_API_KEY")
         if not api_key:
             raise ValueError('Gemini API key is not set. Please export it using: '
