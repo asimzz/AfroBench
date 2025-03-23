@@ -1,7 +1,6 @@
 name: xlsum
 dataset: csebuetnlp/xlsum
 trust_remote_code: True
-use_fewshot: False
 num_fewshot: 5
 languages:
   - amharic

@@ -60,7 +60,7 @@ def validate_and_replace(filtered_responses, targets, choices):
     return valid_responses
 
 
-def process_task(task, langcode, model_name, output_file, prompt_number=None, limit=None):
+def process_task(task, langcode, model_name, output_file, prompt_number=None, limit=None, use_fewshot=False):
     # Check if output file already exists
     if os.path.exists(output_file):
         existing_df = pd.read_csv(output_file)
@@ -70,7 +70,6 @@ def process_task(task, langcode, model_name, output_file, prompt_number=None, li
         processed_indexes = set()
 
     # Few-shot settings
-    use_fewshot = task.get("use_fewshot", False)
     num_fewshot = task.get("num_fewshot", 5)
 
     # dataset parameters

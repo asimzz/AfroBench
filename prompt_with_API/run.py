@@ -12,7 +12,8 @@ logging.basicConfig(
 )
 
 
-def run_tasks(task_files: list, model_name: str, output_dir: str, prompt_no=None, limit: int = None, ):
+def run_tasks(task_files: list, model_name: str, output_dir: str, prompt_no=None,
+              limit: int = None, use_fewshot=False):
     for task_file in task_files:
         try:
             # Load YAML file
@@ -52,6 +53,7 @@ def main():
     parser.add_argument("--output", type=str, required=True, help="Output directory to save results.")
     parser.add_argument("--limit", type=int, help="Useful for testing a small number of samples")
     parser.add_argument("--prompt_no", type=int, help="Specific prompt number to run (1-based index).")
+    parser.add_argument("--use_fewshot", type=bool, help="Specifies whether or not to run fewshot evaluation.")
     args = parser.parse_args()
 
     # Resolve task files
@@ -69,7 +71,7 @@ def main():
         return
 
     # Run tasks
-    run_tasks(task_files, args.model, args.output, args.prompt_no, args.limit)
+    run_tasks(task_files, args.model, args.output, args.prompt_no, args.limit, args.use_fewshot)
 
 
 if __name__ == "__main__":

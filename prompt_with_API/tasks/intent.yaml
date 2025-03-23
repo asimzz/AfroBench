@@ -1,8 +1,8 @@
 name: intent_detection
 dataset: masakhane/InjongoIntent
 languages:
-#  - amh
-#  - eng
+  - amh
+  - eng
   - ewe
   - hau
   - ibo

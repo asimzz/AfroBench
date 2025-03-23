@@ -2,7 +2,6 @@ name: flores
 dataset: facebook/flores
 translation: True
 trust_remote_code: True
-use_fewshot: False
 num_fewshot: 5
 fewshot_split: dev
 languages:

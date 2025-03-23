@@ -2,17 +2,17 @@ name: masakhanews
 dataset: masakhane/masakhanews
 trust_remote_code: True
 languages:
-#  - amh
-#  - eng
-#  - fra
-#  - hau
-#  - ibo
-#  - lin
-#  - lug
-#  - orm
-#  - pcm
-#  - run
-#  - sna
+  - amh
+  - eng
+  - fra
+  - hau
+  - ibo
+  - lin
+  - lug
+  - orm
+  - pcm
+  - run
+  - sna
   - som
   - swa
   - tir
@@ -52,18 +52,6 @@ map_response:
   religion: 4
   sports: 5
   technology: 6
-#preprocessing:
-#  label: #target column to be preprocessed
-#    - function: map_pos_tags
-#      params:
-#        mapping:
-#          0: business
-#          1: entertainment
-#          2: health
-#          3: politics
-#          4: religion
-#          5: sports
-#          6: technology
 metrics:
   - f1
   - acc

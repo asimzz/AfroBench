@@ -1,7 +1,6 @@
 name: masakhapos
 dataset: masakhane/masakhapos
 trust_remote_code: True
-use_fewshot: True
 num_fewshot: 5
 languages:
   - bam
