@@ -35,6 +35,9 @@ cd prompt_with_API
 Install the required Python dependencies:
 ```
 pip install -r requirements.txt 
+```
+Export API keys, this is optional based on the API in use 
+```
 export GEMINI_API_KEY=<API KEY>
 export OPENAI_API_KEY=<API KEY>
 export TOGETHER_API_KEY=<API KEY>
