@@ -31,14 +31,17 @@ git clone https://github.com/McGill-NLP/AfroBench
 cd prompt_with_API
 ```
 
-### Step 2: Install Dependencies
+### Step 2: Install Dependencies and export API Keys 
 Install the required Python dependencies:
 ```
 pip install -r requirements.txt 
+export GEMINI_API_KEY=<API KEY>
+export OPENAI_API_KEY=<API KEY>
+export TOGETHER_API_KEY=<API KEY>
 ```
 ### Step 3: Run the script 
 ``` 
-python run_tasks.py --tasks <task_file_or_directory> --model <model_name> --output <output_directory>
+python run.py --tasks <task_file_or_directory> --model <model_name> --output <output_directory>
 ```
 | Argument        | Description                                                                        |
 |-----------------|------------------------------------------------------------------------------------|
