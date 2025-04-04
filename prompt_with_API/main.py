@@ -248,7 +248,10 @@ def process_task(task, langcode, model_name, output_file, prompt_number=None, li
 
         for metric_name in task["metrics"]:
             for result in results:
-                evaluation_items = [(result["target"].lower(), result["filtered_output"].lower())]
+                try:
+                    evaluation_items = [(result["target"].lower(), result["filtered_output"].lower())]
+                except AttributeError:
+                    evaluation_items = [(result["target"], result["filtered_output"])]
                 result[metric_name] = evaluate_task(evaluation_items, metric_name)
 
         # Convert results to DataFrame and save scores
