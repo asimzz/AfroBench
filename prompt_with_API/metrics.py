@@ -48,6 +48,8 @@ def exact_match_fn(items: List[Tuple[str, str]]) -> float:
     """Compute exact match score."""
     exact_match = hf_evaluate.load("exact_match")
     references, predictions = zip(*items)
+    predictions = [str(p).strip() for p in predictions]
+    references = [str(r).strip() for r in references]
     return exact_match.compute(predictions=predictions, references=references)["exact_match"]
 
 

@@ -1,4 +1,5 @@
 import re
+import string
 from typing import List
 
 
@@ -166,3 +167,19 @@ def extract_pos(responses: List[str], fallback: List[str] = None):
         return pos_tags if pos_tags else fallback
 
     return [extract_pos_tags(resp) for resp in responses]
+
+
+def extract_regex(responses: List[str], pattern=r'(-?[$0-9.,]{2,})|(-?[0-9]+)'):
+    regex = re.compile(pattern)
+
+    def match_regex(text):
+        match = regex.findall(str(text))
+        if match:
+            match = match[-1]
+            if isinstance(match, tuple):
+                match = [m for m in match if m][0]
+            match = match.strip()
+            return match.translate(str.maketrans('', '', string.punctuation))
+        return "invalid"
+
+    return [match_regex(resp.strip()) for resp in responses]

@@ -6,7 +6,7 @@ import pandas as pd
 from typing import List, Tuple, Any
 
 from datasets import load_dataset
-from filters import filter_response, decontaminate_response, format_span, extract_pos
+from filters import filter_response, decontaminate_response, format_span, extract_pos, extract_regex
 from utils import get_language, call_model
 from metrics import acc_all, f1_score_metric, acc_score_pos, bleu, chrf, span_f1_seqio, exact_match_fn, bertscore_fn
 
@@ -29,7 +29,8 @@ METRIC_FUNCTIONS = {
 
 FILTERS = {
     "format_span": format_span,
-    "extract_pos": extract_pos
+    "extract_pos": extract_pos,
+    "extract_regex": extract_regex
 }
 
 
@@ -142,6 +143,7 @@ def process_task(task, langcode, model_name, output_file, prompt_number=None, li
         placeholders = re.findall(r"\{\{(.*?)\}\}", prompt_template)
 
         dataset_length = range(len(dataset)) if limit is None else range(len(dataset[:limit]))
+
         for idx in dataset_length:
             if (prompt_idx, idx) in processed_indexes:
                 continue  # Skip already processed rows
@@ -164,6 +166,10 @@ def process_task(task, langcode, model_name, output_file, prompt_number=None, li
                             else:
                                 temp_prompt = temp_prompt.replace(f"{{{{{placeholder}}}}}",
                                                                   str(fewshot_dataset[source_column][index]))
+                        elif placeholder == "choices" and task['name'] == "afrimmlu":
+                            data = eval(fewshot_dataset['choices'][index])
+                            choices = "\n".join([f"{chr(65 + i)}: {opt}" for i, opt in enumerate(data)])
+                            temp_prompt = temp_prompt.replace(f"{{{{{placeholder}}}}}", choices)
                         elif placeholder == "choices" and task['name'] == "uhura-arc-easy":
                             data = fewshot_dataset['choices'][index]
                             choices = "\n".join(
@@ -194,6 +200,10 @@ def process_task(task, langcode, model_name, output_file, prompt_number=None, li
                 elif placeholder == "choices" and task['name'] == "uhura-arc-easy":
                     data = dataset['choices'][idx]
                     choices = "\n".join([f"{label}: {text}" for label, text in zip(data["label"], data["text"])])
+                    prompt = prompt.replace(f"{{{{{placeholder}}}}}", choices)
+                elif placeholder == "choices" and task['name'] == "afrimmlu":
+                    options = eval(dataset['choices'][idx])
+                    choices = "\n".join([f"{chr(65 + i)}: {opt}" for i, opt in enumerate(options)])
                     prompt = prompt.replace(f"{{{{{placeholder}}}}}", choices)
                 elif placeholder == "language" and task['name'] == "xlsum":
                     prompt = prompt.replace(f"{{{{{placeholder}}}}}", langcode)
