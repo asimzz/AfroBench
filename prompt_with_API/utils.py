@@ -13,6 +13,7 @@ from typing import Any
 from typing import List
 
 from together import Together
+from transformers import pipeline
 import google.generativeai as genai
 
 
@@ -158,17 +159,16 @@ def get_language(langcode):
         "ton_Latn": "Tongan",
         "urd_Arab": "Urdu",
         "ven_Latn": "Venda",
-
     }
     return language_dict[langcode]
 
 
 async def dispatch_openai_requests(
-        messages_list: List[List[dict[str, str]]],
-        model: str,
-        temperature: float,
-        max_tokens: int,
-        top_p: float,
+    messages_list: List[List[dict[str, str]]],
+    model: str,
+    temperature: float,
+    max_tokens: int,
+    top_p: float,
 ) -> List[str]:
     """Dispatches requests to OpenAI API asynchronously.
 
@@ -196,12 +196,12 @@ async def dispatch_openai_requests(
 
 
 async def _throttled_openai_chat_completion_acreate(
-        model: str,
-        messages: list[dict[str, str]],
-        temperature: float,
-        max_tokens: int,
-        top_p: float,
-        limiter: aiolimiter.AsyncLimiter,
+    model: str,
+    messages: list[dict[str, str]],
+    temperature: float,
+    max_tokens: int,
+    top_p: float,
+    limiter: aiolimiter.AsyncLimiter,
 ) -> dict[str, Any]:
     async with limiter:
         for _ in range(100):
@@ -214,7 +214,9 @@ async def _throttled_openai_chat_completion_acreate(
                     top_p=top_p,
                 )
             except openai.error.RateLimitError:
-                logging.warning("OpenAI API rate limit exceeded. Sleeping for 50 seconds.")
+                logging.warning(
+                    "OpenAI API rate limit exceeded. Sleeping for 50 seconds."
+                )
                 await asyncio.sleep(50)
             except asyncio.exceptions.TimeoutError:
                 logging.warning("OpenAI API timeout. Sleeping for 50 seconds.")
@@ -235,12 +237,12 @@ async def _throttled_openai_chat_completion_acreate(
 
 
 async def generate_from_openai_chat_completion(
-        full_contexts: List[List[dict[str, str]]],
-        model_config: str,
-        temperature: float,
-        max_tokens: int,
-        top_p: float,
-        requests_per_minute: int = 300,
+    full_contexts: List[List[dict[str, str]]],
+    model_config: str,
+    temperature: float,
+    max_tokens: int,
+    top_p: float,
+    requests_per_minute: int = 300,
 ) -> list[str]:
     """Generate from OpenAI Chat Completion API.
 
@@ -274,7 +276,9 @@ async def generate_from_openai_chat_completion(
     return [x["choices"][0]["message"]["content"] for x in responses]
 
 
-async def _throttled_gemini_generate_content(model_name: str, prompt: str, limiter: asyncio.Semaphore) -> str:
+async def _throttled_gemini_generate_content(
+    model_name: str, prompt: str, limiter: asyncio.Semaphore
+) -> str:
     """
     Sends a single prompt to Gemini API with throttling and error handling.
 
@@ -304,7 +308,9 @@ async def _throttled_gemini_generate_content(model_name: str, prompt: str, limit
         return "[Error: No response received after retries]"
 
 
-async def generate_gemini_responses(model_name: str, prompts: List[str], concurrency_limit: int = 25) -> List[str]:
+async def generate_gemini_responses(
+    model_name: str, prompts: List[str], concurrency_limit: int = 25
+) -> List[str]:
     """
     Sends multiple prompts to Gemini API asynchronously with throttling.
 
@@ -317,12 +323,17 @@ async def generate_gemini_responses(model_name: str, prompts: List[str], concurr
         A list of generated responses from the model.
     """
     limiter = asyncio.Semaphore(concurrency_limit)
-    tasks = [_throttled_gemini_generate_content(model_name, prompt, limiter) for prompt in prompts]
+    tasks = [
+        _throttled_gemini_generate_content(model_name, prompt, limiter)
+        for prompt in prompts
+    ]
     response = await tqdm_asyncio.gather(*tasks)
     return [x for x in response]
 
 
-async def _throttled_together_generate_content(model_name: str, prompt: str, limiter: asyncio.Semaphore) -> str:
+async def _throttled_together_generate_content(
+    model_name: str, prompt: str, limiter: asyncio.Semaphore
+) -> str:
     """
     Sends a single prompt to Together API with throttling and error handling.
 
@@ -336,8 +347,10 @@ async def _throttled_together_generate_content(model_name: str, prompt: str, lim
     """
     api_key = os.getenv("TOGETHER_API_KEY")
     if not api_key:
-        raise ValueError('TogetherAI API key is not set. Please export it using: '
-                         'export TOGETHER_API_KEY="your_api_key"')
+        raise ValueError(
+            "TogetherAI API key is not set. Please export it using: "
+            'export TOGETHER_API_KEY="your_api_key"'
+        )
     client = Together(api_key=api_key)
     async with limiter:
         for attempt in range(100):  # Max retries
@@ -348,7 +361,7 @@ async def _throttled_together_generate_content(model_name: str, prompt: str, lim
                     messages=[{"role": "user", "content": prompt}],
                     stop=["</s>", "**"],
                     temperature=0.0,
-                    max_tokens=8190-len(prompt)
+                    max_tokens=8190 - len(prompt),
                 )
                 return response.choices[0].message.content
             except asyncio.exceptions.TimeoutError:
@@ -386,30 +399,99 @@ async def generate_together_responses(
     return [x for x in responses]
 
 
+async def _throttled_huggingface_generate_content(
+    model_name: str, prompt: str, limiter: asyncio.Semaphore
+) -> str:
+    """
+    Sends a single prompt to Hugging Face model with throttling and error handling.
+
+    Args:
+        model_name: Hugging Face model to be evaluated.
+        prompt: The input string to send to the model.
+        limiter: An asyncio semaphore to throttle concurrent requests.
+
+    Returns:
+        The response content from the model or a fallback message.
+    """
+    async with limiter:
+        for _ in range(100):  # Max retries
+            try:
+                generator = pipeline("question-answering", model=model_name)
+                response = await asyncio.to_thread(
+                    generator, prompt, max_length=512, num_return_sequences=1
+                )
+                return response[0]["generated_text"]
+            except asyncio.exceptions.TimeoutError:
+                logging.info("Async timeout. Sleeping for 50 seconds.")
+                await asyncio.sleep(50)
+            except Exception as e:
+                logging.error(f"Unexpected error: {e}. Retrying after 50 seconds...")
+                await asyncio.sleep(50)
+
+        # Return a fallback response after retries
+        logging.info(f"Maximum retries reached for prompt: {prompt}")
+        return "[Error: No response received after retries]"
+
+
+async def generate_huggingface_responses(
+    model_name: str, prompts: List[str], concurrency_limit: int = 25
+) -> List[str]:
+    """
+    Sends multiple prompts to Hugging Face API asynchronously with throttling.
+
+    Args:
+        model_name: Hugging Face model to be evaluated.
+        prompts: A list of input prompts to process.
+        concurrency_limit: The maximum number of concurrent requests.
+
+    Returns:
+        A list of generated responses from the model.
+    """
+    limiter = asyncio.Semaphore(concurrency_limit)
+    tasks = [
+        _throttled_huggingface_generate_content(model_name, prompt, limiter)
+        for prompt in prompts
+    ]
+    responses = await asyncio.gather(*tasks)
+    return [x for x in responses]
+
+
 def call_model(model_name: str, prompts):
     if "gpt" in model_name:
         api_key = os.getenv("OPENAI_API_KEY")
         if not api_key:
-            raise ValueError('OpenAI API key is not set. Please export it using: '
-                             'export OPENAI_API_KEY="your_api_key"')
+            raise ValueError(
+                "OpenAI API key is not set. Please export it using: "
+                'export OPENAI_API_KEY="your_api_key"'
+            )
         openai.api_key = api_key
         all_input_messages = []
         for message in prompts:
-            input_mes = [{"role": "system", "content": "You are a helpful assistant."},
-                         {"role": "user", "content": message}]
+            input_mes = [
+                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "user", "content": message},
+            ]
             all_input_messages.append(input_mes)
 
         responses = asyncio.run(
-            generate_from_openai_chat_completion(all_input_messages, model_name, 0.3, 500, 1.0, 500))
+            generate_from_openai_chat_completion(
+                all_input_messages, model_name, 0.3, 500, 1.0, 500
+            )
+        )
 
         completions = [completion_text.lower() for completion_text in responses]
-    elif "gemini" in model_name or 'gemma-3' in model_name:
+    elif "gemini" in model_name or "gemma-3" in model_name:
         api_key = os.getenv("GEMINI_API_KEY")
         if not api_key:
-            raise ValueError('Gemini API key is not set. Please export it using: '
-                             'export GEMINI_API_KEY="your_api_key"')
+            raise ValueError(
+                "Gemini API key is not set. Please export it using: "
+                'export GEMINI_API_KEY="your_api_key"'
+            )
         genai.configure(api_key=api_key)
         responses = asyncio.run(generate_gemini_responses(model_name, prompts))
+        completions = [completion_text.lower() for completion_text in responses]
+    elif "Afro" in model_name:
+        responses = asyncio.run(generate_huggingface_responses(model_name, prompts))
         completions = [completion_text.lower() for completion_text in responses]
     else:
         responses = asyncio.run(generate_together_responses(model_name, prompts))
