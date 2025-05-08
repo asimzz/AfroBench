@@ -13,7 +13,7 @@ from typing import Any
 from typing import List
 
 from together import Together
-from transformers import pipeline
+from transformers import AutoTokenizer, AutoModelForQuestionAnswering
 import google.generativeai as genai
 
 
@@ -416,11 +416,14 @@ async def _throttled_huggingface_generate_content(
     async with limiter:
         for _ in range(100):  # Max retries
             try:
-                generator = pipeline("question-answering", model=model_name)
-                response = await asyncio.to_thread(
-                    generator, prompt, max_length=512, num_return_sequences=1
-                )
-                return response[0]["generated_text"]
+                tokenizer = AutoTokenizer.from_pretrained(model_name)
+                model = AutoModelForQuestionAnswering.from_pretrained(model_name)
+                inputs = tokenizer(prompt, return_tensors="pt")
+                outputs = model(**inputs)
+                answer_start_index = outputs.start_logits.argmax()
+                answer_end_index = outputs.end_logits.argmax()
+                answer = tokenizer.decode(inputs["input_ids"][0][answer_start_index:answer_end_index + 1])
+                return answer
             except asyncio.exceptions.TimeoutError:
                 logging.info("Async timeout. Sleeping for 50 seconds.")
                 await asyncio.sleep(50)
