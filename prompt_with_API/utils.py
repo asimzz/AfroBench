@@ -419,10 +419,9 @@ async def _throttled_huggingface_generate_content(
                 tokenizer = AutoTokenizer.from_pretrained(model_name)
                 model = AutoModelForCausalLM.from_pretrained(model_name)
                 inputs = tokenizer(prompt, return_tensors="pt")
-                outputs = model(**inputs)
-                answer_start_index = outputs.start_logits.argmax()
-                answer_end_index = outputs.end_logits.argmax()
-                answer = tokenizer.decode(inputs["input_ids"][0][answer_start_index:answer_end_index + 1])
+                outputs = model.generate(**inputs, max_new_tokens=50)  # or any desired length
+
+                answer = tokenizer.decode(outputs[0], skip_special_tokens=True)
                 return answer
             except asyncio.exceptions.TimeoutError:
                 logging.info("Async timeout. Sleeping for 50 seconds.")
