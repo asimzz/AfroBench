@@ -12,9 +12,8 @@ TASKS=(
 )
 
 MODEL_NAMES=(
-    "gpt-3.5-turbo"
-    "gpt-4"
-    "gpt-4-32k"
+    "Jacaranda/UlizaLlama"
+    "Jacaranda/AfroLlama_V1"
 )
 
 for MODEL_NAME in "${MODEL_NAMES[@]}"; do
