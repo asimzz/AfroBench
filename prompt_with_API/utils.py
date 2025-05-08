@@ -13,7 +13,7 @@ from typing import Any
 from typing import List
 
 from together import Together
-from transformers import AutoTokenizer, AutoModelForQuestionAnswering
+from transformers import AutoTokenizer, AutoModelForCausalLM
 import google.generativeai as genai
 
 
@@ -417,7 +417,7 @@ async def _throttled_huggingface_generate_content(
         for _ in range(100):  # Max retries
             try:
                 tokenizer = AutoTokenizer.from_pretrained(model_name)
-                model = AutoModelForQuestionAnswering.from_pretrained(model_name)
+                model = AutoModelForCausalLM.from_pretrained(model_name)
                 inputs = tokenizer(prompt, return_tensors="pt")
                 outputs = model(**inputs)
                 answer_start_index = outputs.start_logits.argmax()
