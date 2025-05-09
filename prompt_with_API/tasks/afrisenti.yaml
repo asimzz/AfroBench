@@ -2,20 +2,20 @@ name: afrisenti
 dataset: masakhane/afrisenti
 num_fewshot: 5
 languages:
-  - amh
-  - arq
-  - ary
-  - hau
-  - ibo
-  - kin
-  - orm
-  - pcm
-  - por
+  # - amh
+  # - arq
+  # - ary
+  # - hau
+  # - ibo
+  # - kin
+  # - orm
+  # - pcm
+  # - por
   - swa
-  - tir
-  - tso
-  - twi
-  - yor
+  # - tir
+  # - tso
+  # - twi
+  # - yor
 test_split: test
 fewshot_split: train
 target: label

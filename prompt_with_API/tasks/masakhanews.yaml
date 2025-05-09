@@ -2,22 +2,22 @@ name: masakhanews
 dataset: masakhane/masakhanews
 trust_remote_code: True
 languages:
-  - amh
-  - eng
-  - fra
-  - hau
-  - ibo
-  - lin
-  - lug
-  - orm
-  - pcm
-  - run
-  - sna
-  - som
+  # - amh
+  # - eng
+  # - fra
+  # - hau
+  # - ibo
+  # - lin
+  # - lug
+  # - orm
+  # - pcm
+  # - run
+  # - sna
+  # - som
   - swa
-  - tir
-  - xho
-  - yor
+  # - tir
+  # - xho
+  # - yor
 test_split: test
 fewshot_split: validation
 target: label
@@ -36,14 +36,14 @@ choices:
   - "sports"
   - "technology"
 verbalizer:
-  "business": ['business', 'finance', 'economy', 'economics']
-  "entertainment": ['entertainment', 'music']
-  "health": ['health' ]
-  "politics": ['politics', 'world politics']
-  "religion": ['religion']
-  "sports": ['sports']
-  "technology": ['technology', 'tech',]
-  "science": ['Science', 'science']
+  "business": ["business", "finance", "economy", "economics"]
+  "entertainment": ["entertainment", "music"]
+  "health": ["health"]
+  "politics": ["politics", "world politics"]
+  "religion": ["religion"]
+  "sports": ["sports"]
+  "technology": ["technology", "tech"]
+  "science": ["Science", "science"]
 map_response:
   business: 0
   entertainment: 1

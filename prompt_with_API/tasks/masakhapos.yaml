@@ -3,26 +3,26 @@ dataset: masakhane/masakhapos
 trust_remote_code: True
 num_fewshot: 5
 languages:
-  - bam
-  - bbj
-  - ewe
-  - fon
-  - hau
-  - ibo
-  - kin
-  - lug
-  - luo
-  - mos
-  - nya
-  - pcm
-  - sna
+  # - bam
+  # - bbj
+  # - ewe
+  # - fon
+  # - hau
+  # - ibo
+  # - kin
+  # - lug
+  # - luo
+  # - mos
+  # - nya
+  # - pcm
+  # - sna
   - swa
-  - tsn
-  - twi
-  - wol
-  - xho
-  - yor
-  - zul
+  # - tsn
+  # - twi
+  # - wol
+  # - xho
+  # - yor
+  # - zul
 test_split: test
 fewshot_split: train
 target: upos

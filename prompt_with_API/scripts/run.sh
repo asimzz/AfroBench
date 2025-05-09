@@ -6,8 +6,20 @@ WORK_DIR=$SCRIPT_DIR/..
 TASK_DIR=$WORK_DIR/tasks
 
 TASKS=(
+    "arc-easy"
     "afrimmlu"
     "afrimgsm"
+    "afrisenti"
+    "afrihate"
+    "afrixnli"
+    "openai_mmlu"
+    "afriqa"
+    "belebele"
+    "masakhanews"
+    "masakhapos"
+    "masakhaner"
+    "intent"
+    "xlsum"
 )
 
 MODEL_NAMES=(

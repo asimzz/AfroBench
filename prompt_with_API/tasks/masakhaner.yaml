@@ -4,26 +4,26 @@ trust_remote_code: True
 use_fewshot: True
 num_fewshot: 5
 languages:
-  - am
-  - bbj
-  - bm
-  - ee
-  - ha
-  - ig
-  - lg
-  - luo
-  - mos
-  - ny
-  - pcm
-  - rw
-  - sn
+  # - am
+  # - bbj
+  # - bm
+  # - ee
+  # - ha
+  # - ig
+  # - lg
+  # - luo
+  # - mos
+  # - ny
+  # - pcm
+  # - rw
+  # - sn
   - sw
-  - tn
-  - tw
-  - wo
-  - xh
-  - yo
-  - zu
+  # - tn
+  # - tw
+  # - wo
+  # - xh
+  # - yo
+  # - zu
 test_split: test
 fewshot_split: train
 target: target
