@@ -30,7 +30,7 @@ for i in "${!MODEL_NAMES[@]}"; do
         python3 $WORK_DIR/run.py \
                 --tasks $TASK_DIR/$TASK.yaml \
                 --model $MODEL_NAME \
-                --limit 50 \
+                --limit 250 \
                 --output $OUTPUT_DIR
     done
 done
