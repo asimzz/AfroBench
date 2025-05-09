@@ -4,7 +4,6 @@ set -u # Treat unset variables as an error when substituting.
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 WORK_DIR=$SCRIPT_DIR/..
 TASK_DIR=$WORK_DIR/tasks
-OUTPUT_DIR=$WORK_DIR/../results
 
 TASKS=(
     "afrimmlu"
@@ -16,10 +15,18 @@ MODEL_NAMES=(
     "Jacaranda/AfroLlama_V1"
 )
 
-for MODEL_NAME in "${MODEL_NAMES[@]}"; do
+MODEL_ABBRS=(
+    "uliza-llama"
+    "afro-llama-v1"
+)
+
+for i in "${!MODEL_NAMES[@]}"; do
+    MODEL_NAME=${MODEL_NAMES[$i]}
+    MODEL_ABBR=${MODEL_ABBRS[$i]}
     echo "Running task with model: $MODEL_NAME"
     for TASK in "${TASKS[@]}"; do
         echo "Running task: $TASK"
+        OUTPUT_DIR=$WORK_DIR/output/${TASK}/$MODEL_ABBR
         python3 $WORK_DIR/run.py \
                 --tasks $TASK_DIR/$TASK.yaml \
                 --model $MODEL_NAME \

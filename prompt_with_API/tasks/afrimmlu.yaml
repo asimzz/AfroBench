@@ -2,24 +2,24 @@ name: afrimmlu
 dataset: masakhane/afrimmlu
 trust_remote_code: True
 languages:
-  - eng
-  - fra
-  - amh
-  - ewe
-  - hau
-  - ibo
-  - kin
-  - lin
-  - lug
-  - orm
-  - sna
-  - sot
+  # - eng
+  # - fra
+  # - amh
+  # - ewe
+  # - hau
+  # - ibo
+  # - kin
+  # - lin
+  # - lug
+  # - orm
+  # - sna
+  # - sot
   - swa
-  - twi
-  - wol
-  - xho
-  - yor
-  - zul
+  # - twi
+  # - wol
+  # - xho
+  # - yor
+  # - zul
 test_split: test
 fewshot_split: validation
 target: answer

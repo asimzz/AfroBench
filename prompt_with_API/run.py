@@ -23,7 +23,7 @@ def run_tasks(task_files: list, model_name: str, output_dir: str, prompt_no=None
             task_name = task.get("name", Path(task_file).stem)
             logging.info(f"Starting task: {task_name}")
 
-            output_dir = f"{output_dir}/{task_name}/{model_name}/"
+            # output_dir = f"{output_dir}/{task_name}/{model_name}/"
             os.makedirs(output_dir, exist_ok=True)
 
             # Process task for each language
