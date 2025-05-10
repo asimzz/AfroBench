@@ -400,7 +400,7 @@ async def generate_together_responses(
 
 
 async def _throttled_huggingface_generate_content(
-    model_name: str, prompt: str, limiter: asyncio.Semaphore
+    model, tokenizer, prompt: str, limiter: asyncio.Semaphore
 ) -> str:
     """
     Sends a single prompt to Hugging Face model with throttling and error handling.
@@ -416,11 +416,8 @@ async def _throttled_huggingface_generate_content(
     async with limiter:
         for _ in range(100):  # Max retries
             try:
-                tokenizer = AutoTokenizer.from_pretrained(model_name)
-                model = AutoModelForCausalLM.from_pretrained(model_name)
                 inputs = tokenizer(prompt, return_tensors="pt")
                 outputs = model.generate(**inputs, max_new_tokens=50)  # or any desired length
-
                 answer = tokenizer.decode(outputs[0], skip_special_tokens=True)
                 return answer
             except asyncio.exceptions.TimeoutError:
@@ -450,8 +447,10 @@ async def generate_huggingface_responses(
         A list of generated responses from the model.
     """
     limiter = asyncio.Semaphore(concurrency_limit)
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    model = AutoModelForCausalLM.from_pretrained(model_name)
     tasks = [
-        _throttled_huggingface_generate_content(model_name, prompt, limiter)
+        _throttled_huggingface_generate_content(model, tokenizer, prompt, limiter)
         for prompt in prompts
     ]
     responses = await asyncio.gather(*tasks)
