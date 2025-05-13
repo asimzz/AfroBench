@@ -419,7 +419,7 @@ async def _throttled_huggingface_generate_content(
             try:
                 inputs = tokenizer(prompt, return_tensors="pt")
                 outputs = model.generate(
-                    **inputs, max_new_tokens=50
+                    **inputs, max_new_tokens=50, pad_token_id=tokenizer.eos_token_id
                 )  # or any desired length
                 answer = tokenizer.decode(outputs[0], skip_special_tokens=True)
                 return answer
