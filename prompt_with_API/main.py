@@ -4,11 +4,27 @@ import logging
 import random
 import pandas as pd
 from typing import List, Tuple, Any
+from tqdm import tqdm
 
 from datasets import load_dataset
-from filters import filter_response, decontaminate_response, format_span, extract_pos, extract_regex
+from filters import (
+    filter_response,
+    decontaminate_response,
+    format_span,
+    extract_pos,
+    extract_regex,
+)
 from utils import get_language, call_model
-from metrics import acc_all, f1_score_metric, acc_score_pos, bleu, chrf, span_f1_seqio, exact_match_fn, bertscore_fn
+from metrics import (
+    acc_all,
+    f1_score_metric,
+    acc_score_pos,
+    bleu,
+    chrf,
+    span_f1_seqio,
+    exact_match_fn,
+    bertscore_fn,
+)
 
 logging.basicConfig(
     level=logging.INFO,
@@ -24,13 +40,13 @@ METRIC_FUNCTIONS = {
     "chrf": chrf,
     "span_f1": span_f1_seqio,
     "exact_match": exact_match_fn,
-    "bert_score": bertscore_fn
+    "bert_score": bertscore_fn,
 }
 
 FILTERS = {
     "format_span": format_span,
     "extract_pos": extract_pos,
-    "extract_regex": extract_regex
+    "extract_regex": extract_regex,
 }
 
 
@@ -61,7 +77,15 @@ def validate_and_replace(filtered_responses, targets, choices):
     return valid_responses
 
 
-def process_task(task, langcode, model_name, output_file, prompt_number=None, limit=None, use_fewshot=False):
+def process_task(
+    task,
+    langcode,
+    model_name,
+    output_file,
+    prompt_number=None,
+    limit=None,
+    use_fewshot=False,
+):
     # Check if output file already exists
     if os.path.exists(output_file):
         existing_df = pd.read_csv(output_file)
@@ -76,12 +100,18 @@ def process_task(task, langcode, model_name, output_file, prompt_number=None, li
     # dataset parameters
     dataset_args = {"split": task["test_split"], "name": langcode}
     if task.get("name") == "uhura-arc-easy":
-        dataset_args = {"split": task["test_split"], "name": f"{langcode}_multiple_choice"}
+        dataset_args = {
+            "split": task["test_split"],
+            "name": f"{langcode}_multiple_choice",
+        }
     if task.get("name") == "ntrex":
-        if langcode.startswith('eng'):
-            dataset_args = {"split": task["test_split"], "name": langcode.split('-')[-1]}
+        if langcode.startswith("eng"):
+            dataset_args = {
+                "split": task["test_split"],
+                "name": langcode.split("-")[-1],
+            }
         else:
-            dataset_args = {"split": task["test_split"], "name": langcode.split('-')[0]}
+            dataset_args = {"split": task["test_split"], "name": langcode.split("-")[0]}
     if task.get("dataset_name") is not None:
         dataset_args = {"split": task["test_split"], "name": task["dataset_name"]}
     if task.get("trust_remote_code") is not None:
@@ -102,15 +132,24 @@ def process_task(task, langcode, model_name, output_file, prompt_number=None, li
     target_suffix = task.get("target_suffix", "")
     target_prefix = task.get("target_prefix", "")
 
-    source_lang, target_lang = (f"{langcode.split('-')[0]}", f"{langcode.split('-')[-1]}")
+    source_lang, target_lang = (
+        f"{langcode.split('-')[0]}",
+        f"{langcode.split('-')[-1]}",
+    )
 
-    if task['name'] == 'mafand':
-        source_column = task['target']
-        target_column = task['target']
-        if task['reverse']:
-            source_lang, target_lang = (f"{langcode.split('-')[0]}", f"{langcode.split('-')[-1]}")
+    if task["name"] == "mafand":
+        source_column = task["target"]
+        target_column = task["target"]
+        if task["reverse"]:
+            source_lang, target_lang = (
+                f"{langcode.split('-')[0]}",
+                f"{langcode.split('-')[-1]}",
+            )
         else:
-            target_lang, source_lang = (f"{langcode.split('-')[0]}", f"{langcode.split('-')[-1]}")
+            target_lang, source_lang = (
+                f"{langcode.split('-')[0]}",
+                f"{langcode.split('-')[-1]}",
+            )
     elif task.get("target"):
         target_column = task["target"]
         source_column = None
@@ -125,7 +164,9 @@ def process_task(task, langcode, model_name, output_file, prompt_number=None, li
             f"{target_prefix}_{langcode.split('-')[-1]}",
         )
     else:
-        raise ValueError("Target column could not be determined. Check task configuration.")
+        raise ValueError(
+            "Target column could not be determined. Check task configuration."
+        )
 
     # build prompts
     if prompt_number is not None:
@@ -142,46 +183,83 @@ def process_task(task, langcode, model_name, output_file, prompt_number=None, li
         prompts_with_indexes = []
         placeholders = re.findall(r"\{\{(.*?)\}\}", prompt_template)
 
-        dataset_length = range(len(dataset)) if limit is None else range(len(dataset[:limit]))
+        dataset_length = (
+            range(len(dataset))
+            if limit is None
+            else range(len(dataset.select(range(limit))))
+        )
 
-        for idx in dataset_length:
+        for idx in tqdm(dataset_length):
             if (prompt_idx, idx) in processed_indexes:
                 continue  # Skip already processed rows
 
             # Construct few-shot examples if applicable
             fewshot_prompt = ""
             if use_fewshot:
-                fewshot_samples = random.sample(range(len(fewshot_dataset)), num_fewshot)
+                fewshot_samples = random.sample(
+                    range(len(fewshot_dataset)), num_fewshot
+                )
                 for index in fewshot_samples:
                     temp_prompt = prompt_template
                     for placeholder in placeholders:
                         if placeholder == "source":
-                            temp_prompt = temp_prompt.replace(f"{{{{{placeholder}}}}}", get_language(source_lang))
+                            temp_prompt = temp_prompt.replace(
+                                f"{{{{{placeholder}}}}}", get_language(source_lang)
+                            )
                         elif placeholder == "target":
-                            temp_prompt = temp_prompt.replace(f"{{{{{placeholder}}}}}", get_language(target_lang))
+                            temp_prompt = temp_prompt.replace(
+                                f"{{{{{placeholder}}}}}", get_language(target_lang)
+                            )
                         elif placeholder == "source_column":
-                            if task['name'] == 'mafand':
-                                temp_prompt = temp_prompt.replace(f"{{{{{placeholder}}}}}",
-                                                                  str(fewshot_dataset[source_column][index][source_lang]))
+                            if task["name"] == "mafand":
+                                temp_prompt = temp_prompt.replace(
+                                    f"{{{{{placeholder}}}}}",
+                                    str(
+                                        fewshot_dataset[source_column][index][
+                                            source_lang
+                                        ]
+                                    ),
+                                )
                             else:
-                                temp_prompt = temp_prompt.replace(f"{{{{{placeholder}}}}}",
-                                                                  str(fewshot_dataset[source_column][index]))
-                        elif placeholder == "choices" and task['name'] == "afrimmlu":
-                            data = eval(fewshot_dataset['choices'][index])
-                            choices = "\n".join([f"{chr(65 + i)}: {opt}" for i, opt in enumerate(data)])
-                            temp_prompt = temp_prompt.replace(f"{{{{{placeholder}}}}}", choices)
-                        elif placeholder == "choices" and task['name'] == "uhura-arc-easy":
-                            data = fewshot_dataset['choices'][index]
+                                temp_prompt = temp_prompt.replace(
+                                    f"{{{{{placeholder}}}}}",
+                                    str(fewshot_dataset[source_column][index]),
+                                )
+                        elif placeholder == "choices" and task["name"] == "afrimmlu":
+                            data = eval(fewshot_dataset["choices"][index])
                             choices = "\n".join(
-                                [f"{label}: {text}" for label, text in zip(data["label"], data["text"])])
-                            temp_prompt = temp_prompt.replace(f"{{{{{placeholder}}}}}", choices)
-                        elif placeholder == "language" and task['name'] == "xlsum":
-                            temp_prompt = temp_prompt.replace(f"{{{{{placeholder}}}}}", langcode)
+                                [f"{chr(65 + i)}: {opt}" for i, opt in enumerate(data)]
+                            )
+                            temp_prompt = temp_prompt.replace(
+                                f"{{{{{placeholder}}}}}", choices
+                            )
+                        elif (
+                            placeholder == "choices"
+                            and task["name"] == "uhura-arc-easy"
+                        ):
+                            data = fewshot_dataset["choices"][index]
+                            choices = "\n".join(
+                                [
+                                    f"{label}: {text}"
+                                    for label, text in zip(data["label"], data["text"])
+                                ]
+                            )
+                            temp_prompt = temp_prompt.replace(
+                                f"{{{{{placeholder}}}}}", choices
+                            )
+                        elif placeholder == "language" and task["name"] == "xlsum":
+                            temp_prompt = temp_prompt.replace(
+                                f"{{{{{placeholder}}}}}", langcode
+                            )
                         elif placeholder == "language":
-                            temp_prompt = temp_prompt.replace(f"{{{{{placeholder}}}}}", get_language(langcode))
+                            temp_prompt = temp_prompt.replace(
+                                f"{{{{{placeholder}}}}}", get_language(langcode)
+                            )
                         elif placeholder in dataset.features:
-                            temp_prompt = temp_prompt.replace(f"{{{{{placeholder}}}}}",
-                                                              str(fewshot_dataset[placeholder][index]))
+                            temp_prompt = temp_prompt.replace(
+                                f"{{{{{placeholder}}}}}",
+                                str(fewshot_dataset[placeholder][index]),
+                            )
                     temp_prompt += f" {fewshot_dataset[target_column][index]}\n\n"
                     fewshot_prompt += temp_prompt
 
@@ -189,28 +267,48 @@ def process_task(task, langcode, model_name, output_file, prompt_number=None, li
             prompt = fewshot_prompt + prompt_template
             for placeholder in placeholders:
                 if placeholder == "source":
-                    prompt = prompt.replace(f"{{{{{placeholder}}}}}", get_language(source_lang))
+                    prompt = prompt.replace(
+                        f"{{{{{placeholder}}}}}", get_language(source_lang)
+                    )
                 elif placeholder == "target":
-                    prompt = prompt.replace(f"{{{{{placeholder}}}}}", get_language(target_lang))
+                    prompt = prompt.replace(
+                        f"{{{{{placeholder}}}}}", get_language(target_lang)
+                    )
                 elif placeholder == "source_column":
-                    if task['name'] == 'mafand':
-                        prompt = prompt.replace(f"{{{{{placeholder}}}}}", str(dataset[source_column][idx][source_lang]))
+                    if task["name"] == "mafand":
+                        prompt = prompt.replace(
+                            f"{{{{{placeholder}}}}}",
+                            str(dataset[source_column][idx][source_lang]),
+                        )
                     else:
-                        prompt = prompt.replace(f"{{{{{placeholder}}}}}", str(dataset[source_column][idx]))
-                elif placeholder == "choices" and task['name'] == "uhura-arc-easy":
-                    data = dataset['choices'][idx]
-                    choices = "\n".join([f"{label}: {text}" for label, text in zip(data["label"], data["text"])])
+                        prompt = prompt.replace(
+                            f"{{{{{placeholder}}}}}", str(dataset[source_column][idx])
+                        )
+                elif placeholder == "choices" and task["name"] == "uhura-arc-easy":
+                    data = dataset["choices"][idx]
+                    choices = "\n".join(
+                        [
+                            f"{label}: {text}"
+                            for label, text in zip(data["label"], data["text"])
+                        ]
+                    )
                     prompt = prompt.replace(f"{{{{{placeholder}}}}}", choices)
-                elif placeholder == "choices" and task['name'] == "afrimmlu":
-                    options = eval(dataset['choices'][idx])
-                    choices = "\n".join([f"{chr(65 + i)}: {opt}" for i, opt in enumerate(options)])
+                elif placeholder == "choices" and task["name"] == "afrimmlu":
+                    options = eval(dataset["choices"][idx])
+                    choices = "\n".join(
+                        [f"{chr(65 + i)}: {opt}" for i, opt in enumerate(options)]
+                    )
                     prompt = prompt.replace(f"{{{{{placeholder}}}}}", choices)
-                elif placeholder == "language" and task['name'] == "xlsum":
+                elif placeholder == "language" and task["name"] == "xlsum":
                     prompt = prompt.replace(f"{{{{{placeholder}}}}}", langcode)
                 elif placeholder == "language":
-                    prompt = prompt.replace(f"{{{{{placeholder}}}}}", get_language(langcode))
+                    prompt = prompt.replace(
+                        f"{{{{{placeholder}}}}}", get_language(langcode)
+                    )
                 elif placeholder in dataset.features:
-                    prompt = prompt.replace(f"{{{{{placeholder}}}}}", str(dataset[placeholder][idx]))
+                    prompt = prompt.replace(
+                        f"{{{{{placeholder}}}}}", str(dataset[placeholder][idx])
+                    )
 
             prompts_with_indexes.append((idx, prompt))
 
@@ -228,14 +326,20 @@ def process_task(task, langcode, model_name, output_file, prompt_number=None, li
         post_process = task.get("map_response", {})
 
         # Batch filtering
-        if 'choices' in task:
-            if 'verbalizer' in task:
-                filtered_responses = filter_response(decontaminated_responses, task["choices"], task["verbalizer"])
+        if "choices" in task:
+            if "verbalizer" in task:
+                filtered_responses = filter_response(
+                    decontaminated_responses, task["choices"], task["verbalizer"]
+                )
             else:
-                filtered_responses = filter_response(decontaminated_responses, task["choices"])
+                filtered_responses = filter_response(
+                    decontaminated_responses, task["choices"]
+                )
 
-            filtered_responses = validate_and_replace(filtered_responses, dataset[target_column], task["choices"])
-        elif 'filters' in task:
+            filtered_responses = validate_and_replace(
+                filtered_responses, dataset[target_column], task["choices"]
+            )
+        elif "filters" in task:
             filtered_responses = decontaminated_responses
             for filter_config in task["filters"]:
                 filtered_responses = filter_task(filtered_responses, filter_config)
@@ -247,9 +351,17 @@ def process_task(task, langcode, model_name, output_file, prompt_number=None, li
                 "index": idx,
                 "prompt_no": prompt_idx,
                 "prompt": prompt,
-                "target": dataset[target_column][idx][target_lang] if task['name'] == 'mafand' else dataset[target_column][idx],
+                "target": (
+                    dataset[target_column][idx][target_lang]
+                    if task["name"] == "mafand"
+                    else dataset[target_column][idx]
+                ),
                 "raw_output": raw_response,
-                "filtered_output": post_process[filtered_responses] if post_process else filtered_responses,
+                "filtered_output": (
+                    post_process[filtered_responses]
+                    if post_process
+                    else filtered_responses
+                ),
             }
             for idx, prompt, raw_response, filtered_responses in zip(
                 indexes, prompts, raw_responses, filtered_responses
@@ -259,7 +371,9 @@ def process_task(task, langcode, model_name, output_file, prompt_number=None, li
         for metric_name in task["metrics"]:
             for result in results:
                 try:
-                    evaluation_items = [(result["target"].lower(), result["filtered_output"].lower())]
+                    evaluation_items = [
+                        (result["target"].lower(), result["filtered_output"].lower())
+                    ]
                 except AttributeError:
                     evaluation_items = [(result["target"], result["filtered_output"])]
                 result[metric_name] = evaluate_task(evaluation_items, metric_name)
@@ -280,13 +394,19 @@ def process_task(task, langcode, model_name, output_file, prompt_number=None, li
         current_avg_scores_df = pd.DataFrame([avg_score])
 
         # Output file for average scores
-        avg_output_file = os.path.join(os.path.dirname(output_file), f"{task['name']}_results.csv")
+        avg_output_file = os.path.join(
+            os.path.dirname(output_file), f"{task['name']}_results.csv"
+        )
         if os.path.exists(avg_output_file):
             existing_avg_scores_df = pd.read_csv(avg_output_file)
-            updated_avg_scores_df = pd.concat([existing_avg_scores_df, current_avg_scores_df], ignore_index=True)
+            updated_avg_scores_df = pd.concat(
+                [existing_avg_scores_df, current_avg_scores_df], ignore_index=True
+            )
         else:
             updated_avg_scores_df = current_avg_scores_df
 
         # Save the updated DataFrame
         updated_avg_scores_df.to_csv(avg_output_file, index=False)
-        logging.info(f"Average scores for prompt {prompt_idx} saved to {avg_output_file}.")
+        logging.info(
+            f"Average scores for prompt {prompt_idx} saved to {avg_output_file}."
+        )

@@ -5,6 +5,7 @@ import openai
 import asyncio
 import logging
 import aiolimiter
+from tqdm import tqdm
 
 from aiohttp import ClientSession
 from tqdm.asyncio import tqdm_asyncio
@@ -417,7 +418,9 @@ async def _throttled_huggingface_generate_content(
         for _ in range(100):  # Max retries
             try:
                 inputs = tokenizer(prompt, return_tensors="pt")
-                outputs = model.generate(**inputs, max_new_tokens=50)  # or any desired length
+                outputs = model.generate(
+                    **inputs, max_new_tokens=50
+                )  # or any desired length
                 answer = tokenizer.decode(outputs[0], skip_special_tokens=True)
                 return answer
             except asyncio.exceptions.TimeoutError:
@@ -451,7 +454,7 @@ async def generate_huggingface_responses(
     model = AutoModelForCausalLM.from_pretrained(model_name)
     tasks = [
         _throttled_huggingface_generate_content(model, tokenizer, prompt, limiter)
-        for prompt in prompts
+        for prompt in tqdm(prompts)
     ]
     responses = await asyncio.gather(*tasks)
     return [x for x in responses]
