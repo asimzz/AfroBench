@@ -1,11 +1,12 @@
 from __future__ import annotations
 import os
 
+import torch
+from tqdm import tqdm
 import openai
 import asyncio
 import logging
 import aiolimiter
-from tqdm import tqdm
 
 from aiohttp import ClientSession
 from tqdm.asyncio import tqdm_asyncio
@@ -405,59 +406,54 @@ async def _throttled_huggingface_generate_content(
 ) -> str:
     """
     Sends a single prompt to Hugging Face model with throttling and error handling.
-
-    Args:
-        model_name: Hugging Face model to be evaluated.
-        prompt: The input string to send to the model.
-        limiter: An asyncio semaphore to throttle concurrent requests.
-
-    Returns:
-        The response content from the model or a fallback message.
     """
     async with limiter:
         for _ in range(100):  # Max retries
             try:
-                inputs = tokenizer(prompt, return_tensors="pt")
-                outputs = model.generate(
-                    **inputs, max_new_tokens=50, pad_token_id=tokenizer.eos_token_id
-                )  # or any desired length
-                answer = tokenizer.decode(outputs[0], skip_special_tokens=True)
-                return answer
+                inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
+                with torch.no_grad():
+                    outputs = model.generate(
+                        **inputs, max_new_tokens=50, pad_token_id=tokenizer.eos_token_id
+                    )
+                    answer = tokenizer.decode(outputs[0], skip_special_tokens=True)
+                    return answer
             except asyncio.exceptions.TimeoutError:
-                logging.info("Async timeout. Sleeping for 50 seconds.")
+                logging.warning("Async timeout. Sleeping for 50 seconds.")
                 await asyncio.sleep(50)
             except Exception as e:
                 logging.error(f"Unexpected error: {e}. Retrying after 50 seconds...")
                 await asyncio.sleep(50)
 
-        # Return a fallback response after retries
         logging.info(f"Maximum retries reached for prompt: {prompt}")
         return "[Error: No response received after retries]"
 
 
 async def generate_huggingface_responses(
-    model_name: str, prompts: List[str], concurrency_limit: int = 25
+    model_name: str,
+    prompts: List[str],
+    concurrency_limit: int = 25,
 ) -> List[str]:
     """
-    Sends multiple prompts to Hugging Face API asynchronously with throttling.
-
-    Args:
-        model_name: Hugging Face model to be evaluated.
-        prompts: A list of input prompts to process.
-        concurrency_limit: The maximum number of concurrent requests.
-
-    Returns:
-        A list of generated responses from the model.
+    Sends multiple prompts to Hugging Face model asynchronously with live tqdm updates.
     """
     limiter = asyncio.Semaphore(concurrency_limit)
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     model = AutoModelForCausalLM.from_pretrained(model_name)
-    tasks = [
-        _throttled_huggingface_generate_content(model, tokenizer, prompt, limiter)
-        for prompt in tqdm(prompts)
-    ]
-    responses = await asyncio.gather(*tasks)
-    return [x for x in responses]
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    model = model.to(device)
+
+    pbar = tqdm(total=len(prompts), desc="Generating responses")
+    results = []
+
+    async def wrapped_task(prompt):
+        result = await _throttled_huggingface_generate_content(model, tokenizer, prompt, limiter)
+        pbar.update(1)
+        return result
+
+    tasks = [wrapped_task(prompt) for prompt in prompts]
+    results = await asyncio.gather(*tasks)
+    pbar.close()
+    return results
 
 
 def call_model(model_name: str, prompts):
