@@ -23,7 +23,7 @@ TASKS=(
 )
 
 MODEL_NAMES=(
-    "Jacaranda/UlizaLlama"
+    # "Jacaranda/UlizaLlama"
     "Jacaranda/AfroLlama_V1"
 )
 
