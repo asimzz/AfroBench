@@ -36,7 +36,7 @@ def run_tasks(task_files: list, model_name: str, output_dir: str, prompt_no=None
                     continue
 
                 logging.info(f"Processing language: {language}")
-                process_task(task, language, model_name, output_file, prompt_no, limit)
+                process_task(task, language, model_name, output_file, prompt_no, limit, use_fewshot)
             result_files = glob.glob(os.path.join(output_dir, f"{task_name}_*_results.csv"))
             combined_df = pd.concat([pd.read_csv(file) for file in result_files], ignore_index=True)
             combined_df.to_csv(os.path.join(output_dir, f"{task_name}_combined_results.csv"), index=False)

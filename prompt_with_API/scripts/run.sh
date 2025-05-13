@@ -28,7 +28,7 @@ MODEL_NAMES=(
 )
 
 MODEL_ABBRS=(
-    "uliza-llama"
+    # "uliza-llama"
     "afro-llama-v1"
 )
 
@@ -42,6 +42,7 @@ for i in "${!MODEL_NAMES[@]}"; do
         python3 $WORK_DIR/run.py \
                 --tasks $TASK_DIR/$TASK.yaml \
                 --model $MODEL_NAME \
+                --use_fewshot True \
                 --output $OUTPUT_DIR
                 # --limit 250 \
     done
