@@ -490,7 +490,7 @@ def call_model(model_name: str, prompts):
         genai.configure(api_key=api_key)
         responses = asyncio.run(generate_gemini_responses(model_name, prompts))
         completions = [completion_text.lower() for completion_text in responses]
-    elif "Jacaranda" in model_name:
+    elif "asim" in model_name:
         responses = asyncio.run(generate_huggingface_responses(model_name, prompts))
         completions = [completion_text.lower() for completion_text in responses]
     else:

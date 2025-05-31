@@ -12,7 +12,7 @@ TASKS=(
     # "afrisenti"
     # "afrihate"
     # "afrixnli"
-    # "openai_mmlu"
+    "openai_mmlu"
     # "afriqa"
     "belebele"
     # "masakhanews"
