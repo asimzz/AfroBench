@@ -14,6 +14,7 @@ from tqdm.asyncio import tqdm_asyncio
 from typing import Any
 from typing import List
 
+from unsloth import FastLanguageModel
 from together import Together
 from transformers import AutoTokenizer, AutoModelForCausalLM
 import google.generativeai as genai
@@ -446,7 +447,71 @@ async def generate_huggingface_responses(
     results = []
 
     async def wrapped_task(prompt):
-        result = await _throttled_huggingface_generate_content(model, tokenizer, prompt, limiter)
+        result = await _throttled_huggingface_generate_content(
+            model, tokenizer, prompt, limiter
+        )
+        pbar.update(1)
+        return result
+
+    tasks = [wrapped_task(prompt) for prompt in prompts]
+    results = await asyncio.gather(*tasks)
+    pbar.close()
+    return results
+
+
+async def _throttled_unsloth_generate_content(
+    model,
+    tokenizer,
+    prompt: str,
+    limiter: asyncio.Semaphore,
+    max_new_tokens: int = 50,
+) -> str:
+    """
+    Generates text using an Unsloth model with throttling and error handling.
+    """
+    async with limiter:
+        for _ in range(100):  # retry logic
+            try:
+                tokens = tokenizer(prompt, return_tensors="pt").to(model.device)
+                outputs = model.generate(**tokens, max_new_tokens=max_new_tokens)
+                decoded = tokenizer.batch_decode(outputs, skip_special_tokens=True)[0]
+                return decoded
+            except asyncio.exceptions.TimeoutError:
+                await asyncio.sleep(50)
+            except Exception as e:
+                print(f"[Unsloth Error] {e}, retrying in 50s...")
+                await asyncio.sleep(50)
+
+        return "[Error: No response received after retries]"
+
+
+async def generate_unsloth_responses(
+    model_name: str,
+    prompts: List[str],
+    concurrency_limit: int = 20,
+    max_new_tokens: int = 50,
+) -> List[str]:
+    """
+    Asynchronously generates completions using an Unsloth model.
+    """
+    limiter = asyncio.Semaphore(concurrency_limit)
+
+    # Load Unsloth model + tokenizer
+    model, tokenizer = FastLanguageModel.from_pretrained(
+        model_name=model_name,
+        max_seq_length=2048,
+        dtype="float16",  # or "bfloat16" if supported
+        load_in_4bit=True,
+    )
+
+    # Progress bar
+    pbar = tqdm(total=len(prompts), desc="Generating with Unsloth")
+    results = []
+
+    async def wrapped_task(prompt):
+        result = await _throttled_unsloth_generate_content(
+            model, tokenizer, prompt, limiter, max_new_tokens
+        )
         pbar.update(1)
         return result
 
@@ -491,7 +556,7 @@ def call_model(model_name: str, prompts):
         responses = asyncio.run(generate_gemini_responses(model_name, prompts))
         completions = [completion_text.lower() for completion_text in responses]
     elif "asim" in model_name:
-        responses = asyncio.run(generate_huggingface_responses(model_name, prompts))
+        responses = asyncio.run(generate_unsloth_responses(model_name, prompts))
         completions = [completion_text.lower() for completion_text in responses]
     else:
         responses = asyncio.run(generate_together_responses(model_name, prompts))
