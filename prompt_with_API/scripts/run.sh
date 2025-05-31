@@ -6,15 +6,15 @@ WORK_DIR=$SCRIPT_DIR/..
 TASK_DIR=$WORK_DIR/tasks
 
 TASKS=(
-    "arc-easy"
-    # "afrimmlu"
+    # "arc-easy"
+    "afrimmlu"
     # "afrimgsm"
     # "afrisenti"
     # "afrihate"
     # "afrixnli"
     # "openai_mmlu"
     # "afriqa"
-    # "belebele"
+    "belebele"
     # "masakhanews"
     # "masakhapos"
     # "masakhaner"
@@ -24,12 +24,12 @@ TASKS=(
 
 MODEL_NAMES=(
     # "Jacaranda/UlizaLlama"
-    "Jacaranda/AfroLlama_V1"
+    "asimz/SALAMA-1.1"
 )
 
 MODEL_ABBRS=(
     # "uliza-llama"
-    "afro-llama-v1"
+    "salama-1.1"
 )
 
 for i in "${!MODEL_NAMES[@]}"; do
